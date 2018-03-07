@@ -22,5 +22,5 @@ npm install -g cnpm --registry=https://registry.npm.taobao.org
 
 install truffle
 ```
-install -g truffle
+cnmp install -g truffle
 ```
