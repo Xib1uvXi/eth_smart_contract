@@ -24,3 +24,13 @@ install truffle
 ```
 cnpm install -g truffle
 ```
+
+install Solidity compiler
+```
+cnpm install -g solc
+```
+
+install ethereumjs-testrpc
+```
+cnpm install -g ethereumjs-testrpc
+``` 
