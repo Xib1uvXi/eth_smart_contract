@@ -4,8 +4,9 @@ contract Greeter {
     address creator;
     string greeting;
 
-    function Greeter() public {
+    function Greeter(string _greeting) public {
         creator = msg.sender;
+        greeting = _greeting;
     }
 
     function greet() public constant returns (string) {
