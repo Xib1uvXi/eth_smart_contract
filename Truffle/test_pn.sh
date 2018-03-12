@@ -20,6 +20,13 @@ if [ $2 == "start" ];then
 
     ./init_pn_env.sh
 
+    ## create more accounts
+
+    geth --datadir "./data" account new --password <(echo "123")
+    geth --datadir "./data" account new --password <(echo "123")
+    geth --datadir "./data" account new --password <(echo "123")
+
+
     nohup ./console.sh $1 test > /dev/null 2>&1 &
     echo $! > pid
 
