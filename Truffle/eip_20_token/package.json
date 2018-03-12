@@ -1,0 +1,15 @@
+{
+  "name": "eip_20_token",
+  "version": "0.0.1",
+  "description": "erc 20",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "./run_test.sh",
+    "compile": "truffle compile"
+  },
+  "author": "xib",
+  "license": "ISC"
+}
