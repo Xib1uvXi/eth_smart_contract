@@ -12,14 +12,11 @@ contract('Greeter.sol', async (accounts) => {
     it('test setGreeting()', async () => {
         let instance = await Greeter.deployed();
 
-        let setGreetResult = await instance.setGreeting.call("gigi");
-
-        console.log(setGreetResult);
+        await instance.setGreeting("gigi");
 
         let greetResult = await instance.greet.call();
 
         assert.equal(greetResult, "gigi")
     });
-
 
 })

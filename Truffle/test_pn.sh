@@ -12,6 +12,10 @@ if [ $2 == "start" ];then
 
     git clone https://github.com/Xib1uvXi/eth_pn.git  ### 以后可以cp
 
+    # cp /home/qydev/wangxi/eth_pn
+
+#    cp -r ~/wangxi/eth_pn/ ./
+
     cd eth_pn
 
     ./init_pn_env.sh
