@@ -38,4 +38,95 @@ contract('EIP20', async (accounts) => {
         assert.strictEqual(balance.toNumber(), 10000);
     });
 
+    it('transfers: should handle zero-transfers normally', async () => {
+        assert(await QYC.transfer.call(accounts[1], 0, { from: accounts[0] }), 'zero-transfer has failed');
+    });
+
+    it('approvals: msg.sender should approve 100 to accounts[1]', async () => {
+        await QYC.approve(accounts[1], 100, { from: accounts[0] });
+        const allowance = await QYC.allowance.call(accounts[0], accounts[1]);
+        assert.strictEqual(allowance.toNumber(), 100);
+    });
+
+    // it('approvals: msg.sender approves accounts[1] of 100 & withdraws 20 twice.', async () => {
+    //     await QYC.approve(accounts[1], 100, { from: accounts[0] });
+    //     const allowance01 = await QYC.allowance.call(accounts[0], accounts[1]);
+    //     assert.strictEqual(allowance01.toNumber(), 100);
+    //
+    //     await QYC.transferFrom(accounts[0], accounts[2], 20, { from: accounts[1] });
+    //     const allowance012 = await QYC.allowance.call(accounts[0], accounts[1]);
+    //     assert.strictEqual(allowance012.toNumber(), 80);
+    //
+    //     const balance2 = await QYC.balanceOf.call(accounts[2]);
+    //     assert.strictEqual(balance2.toNumber(), 20);
+    //
+    //     const balance0 = await QYC.balanceOf.call(accounts[0]);
+    //     assert.strictEqual(balance0.toNumber(), 9980);
+    //
+    //     // FIRST tx done.
+    //     // onto next.
+    //     await QYC.transferFrom(accounts[0], accounts[2], 20, { from: accounts[1] });
+    //     const allowance013 = await QYC.allowance.call(accounts[0], accounts[1]);
+    //     assert.strictEqual(allowance013.toNumber(), 60);
+    //
+    //     const balance22 = await QYC.balanceOf.call(accounts[2]);
+    //     assert.strictEqual(balance22.toNumber(), 40);
+    //
+    //     const balance02 = await QYC.balanceOf.call(accounts[0]);
+    //     assert.strictEqual(balance02.toNumber(), 9960);
+    // });
+
+    // it('approvals: approve max (2^256 - 1)', async () => {
+    //     await QYC.approve(accounts[1], '115792089237316195423570985008687907853269984665640564039457584007913129639935', { from: accounts[0] });
+    //     const allowance = await QYC.allowance(accounts[0], accounts[1]);
+    //     assert(allowance.equals('1.15792089237316195423570985008687907853269984665640564039457584007913129639935e+77'));
+    // });
+
+    // should approve max of msg.sender & withdraw 20 without changing allowance (should succeed).
+    it('approvals: msg.sender approves accounts[1] of max (2^256 - 1) & withdraws 20', async () => {
+        const balance0 = await QYC.balanceOf.call(accounts[0]);
+        assert.strictEqual(balance0.toNumber(), 10000);
+
+        const max = '1.15792089237316195423570985008687907853269984665640564039457584007913129639935e+77';
+        await QYC.approve(accounts[1], max, { from: accounts[0] });
+        const balance2 = await QYC.balanceOf.call(accounts[2]);
+        assert.strictEqual(balance2.toNumber(), 0, 'balance2 not correct');
+
+        await QYC.transferFrom(accounts[0], accounts[2], 20, { from: accounts[1] });
+        const allowance01 = await QYC.allowance.call(accounts[0], accounts[1]);
+        assert(allowance01.equals(max));
+
+        const balance22 = await QYC.balanceOf.call(accounts[2]);
+        assert.strictEqual(balance22.toNumber(), 20);
+
+        const balance02 = await QYC.balanceOf.call(accounts[0]);
+        assert.strictEqual(balance02.toNumber(), 9980);
+    });
+
+    /* eslint-disable no-underscore-dangle */
+    it('events: should fire Transfer event properly', async () => {
+        const res = await QYC.transfer(accounts[1], '2666', { from: accounts[0] });
+        const transferLog = res.logs.find(element => element.event.match('Transfer'));
+        assert.strictEqual(transferLog.args._from, accounts[0]);
+        assert.strictEqual(transferLog.args._to, accounts[1]);
+        assert.strictEqual(transferLog.args._value.toString(), '2666');
+    });
+
+    it('events: should fire Transfer event normally on a zero transfer', async () => {
+        const res = await QYC.transfer(accounts[1], '0', { from: accounts[0] });
+        const transferLog = res.logs.find(element => element.event.match('Transfer'));
+        assert.strictEqual(transferLog.args._from, accounts[0]);
+        assert.strictEqual(transferLog.args._to, accounts[1]);
+        assert.strictEqual(transferLog.args._value.toString(), '0');
+    });
+
+    it('events: should fire Approval event properly', async () => {
+        const res = await QYC.approve(accounts[1], '2666', { from: accounts[0] });
+        const approvalLog = res.logs.find(element => element.event.match('Approval'));
+        assert.strictEqual(approvalLog.args._owner, accounts[0]);
+        assert.strictEqual(approvalLog.args._spender, accounts[1]);
+        assert.strictEqual(approvalLog.args._value.toString(), '2666');
+    });
+
+
 });
